@@ -3,7 +3,8 @@ import random
 import torch
 import numpy as np
 from torch_geometric.data import Data
-from core.transform_utils.subgraph_extractors import metis_subgraph, random_subgraph
+from core.transform_utils.subgraph_extractors import  random_subgraph
+# metis_subgraph
 from core.data_utils.pe import RWSE, LapPE, random_walk
 from torch_geometric.transforms import Compose
 
@@ -100,7 +101,7 @@ class PositionalEncodingTransform(object):
 
 
 class GraphJEPAPartitionTransform(object):
-    def __init__(self, n_patches, metis=True, drop_rate=0.0, num_hops=1, is_directed=False, patch_rw_dim=0, patch_num_diff=0, num_context=1, num_targets=4):
+    def __init__(self, n_patches, metis=False, drop_rate=0.0, num_hops=1, is_directed=False, patch_rw_dim=0, patch_num_diff=0, num_context=1, num_targets=4):
         super().__init__()
         self.n_patches = n_patches
         self.drop_rate = drop_rate
@@ -126,11 +127,11 @@ class GraphJEPAPartitionTransform(object):
 
     def __call__(self, data):
         data = SubgraphsData(**{k: v for k, v in data})
-        if self.metis:
-            node_masks, edge_masks = metis_subgraph(
-                data, n_patches=self.n_patches, drop_rate=self.drop_rate, num_hops=self.num_hops, is_directed=self.is_directed)
-        else:
-            node_masks, edge_masks = random_subgraph(
+        # if self.metis:
+        #     node_masks, edge_masks = metis_subgraph(
+        #         data, n_patches=self.n_patches, drop_rate=self.drop_rate, num_hops=self.num_hops, is_directed=self.is_directed)
+        # else:
+        node_masks, edge_masks = random_subgraph(
                 data, n_patches=self.n_patches, num_hops=self.num_hops)
         subgraphs_nodes, subgraphs_edges = to_sparse(node_masks, edge_masks)
 
